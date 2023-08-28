@@ -34,4 +34,7 @@ describe('Página do Carrinho', () => {
         })
     })
 
+    //Verificar se o carrinho é atualizado corretamente após adicionar um produto.
+    //Verificar se os preços exibidos na página correspondem aos preços reais dos produtos.
+    //Verificar se os valores no carrinho são calculados corretamente com base nos produtos adicionados.
 })

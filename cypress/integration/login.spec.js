@@ -1,48 +1,72 @@
 ///<reference types="Cypress" />
 
+// Define cenários de teste de login com diferentes usuários
+const userScenarios = [
+  // Usuário loga com sucesso
+  { user: "user1", expectedErrorMessage: "", description: "Usuário loga com sucesso" },
+  // Tenta logar sem usuário
+  { user: "user5", expectedErrorMessage: "Epic sadface: Username is required", description: "Tenta logar sem usuário" },
+  // Tenta logar sem senha
+  { user: "user6", expectedErrorMessage: "Epic sadface: Password is required", description: "Tenta logar sem senha" },
+  // Tenta logar com credenciais inválidas
+  { user: "user7", expectedErrorMessage: "Epic sadface: Username and password do not match any user in this service", description: "Tenta logar com credenciais inválidas" },
+  // Usuário bloqueado tenta logar
+  { user: "user2", expectedErrorMessage: "Epic sadface: Sorry, this user has been locked out.", description: "Usuário bloqueado tenta logar" }
+];
+
+// Descreve o conjunto de testes relacionados à Página de Login
 describe('Página de Login', function () {
-  beforeEach(function () {
-    cy.visit('https://www.saucedemo.com/')
-  })
+  // Antes de cada teste, visita a página de login
+  beforeEach(() => {
+    cy.visit(Cypress.env('links').login);
+  });
 
-  describe('Login com sucesso', () => {
-    it('Deve permitir que o usuário faça login com sucesso', () => {
-      cy.get('#user-name').type('standard_user')
-      cy.get('#password').type('secret_sauce')
-      cy.contains('Login').click()
-    })
-  })
+  // Itera sobre cada cenário de teste de login
+  userScenarios.forEach(({ user, expectedErrorMessage, description }) => {
+    // Descreve o teste específico para o cenário atual
+    it(`Deve ${expectedErrorMessage ? "exibir mensagem de erro" : "permitir que o usuário faça login"
+      } com usuário ${user}: ${description}`, () => {
+        // Realiza o login com o usuário atual
+        cy.login("login", user);
 
-  describe('Login sem usuário', () => {
-    it('Deve exibir mensagem de erro ao tentar fazer login sem usuário', () => {
-      cy.get('#user-name').clear() // Deixa o campo de usuário vazio
-      cy.get('#password').type('secret_sauce')
-      cy.contains('Login').click()
-      cy.get('.error-message-container')
-        .should('be.visible') // Verifica se o elemento está visível
-        .should('have.text', 'Epic sadface: Username is required') // Verifica o texto da mensagem de erro
-    })
-  })
+        // Verifica se há uma mensagem de erro visível, se esperado
+        if (expectedErrorMessage) {
+          cy.get('.error-message-container')
+            .should('be.visible')
+            .should('have.text', expectedErrorMessage);
+        } else {
+          // Verifica se o usuário foi redirecionado para a página de produtos
+          cy.url().should('include', '/inventory.html');
+        }
+      });
+  });
 
-  describe('Login sem senha', () => {
-    it('Deve exibir mensagem de erro ao tentar fazer login sem senha', () => {
-      cy.get('#user-name').type('standard_user')
-      cy.get('#password').clear()
-      cy.contains('Login').click()
-      cy.get('.error-message-container')
-        .should('be.visible') // Verifica se o elemento está visível
-        .should('have.text', 'Epic sadface: Password is required') // Verifica o texto da mensagem de erro
-    })
-  })
+  // Descreve o conjunto de testes relacionados a problemas na conta do usuário
+  describe('Usuário com problemas na conta', () => {
+    // Teste para verificar se um usuário com informações incorretas dos produtos consegue fazer login
+    it('Deve verificar se um usuário com informações incorretas dos produtos consegue fazer login', () => {
+      cy.login("login", "user3");
+    });
 
-  describe('Credenciais inválidas', () => {
-    it('Deve exibir mensagem de erro ao usar credenciais inválidas', () => {
-      cy.get('#user-name').type('standard_usera')
-      cy.get('#password').type('secret_sauce')
-      cy.contains('Login').click()
-      cy.get('.error-message-container')
-        .should('be.visible') // Verifica se o elemento está visível
-        .should('have.text', 'Epic sadface: Username and password do not match any user in this service') // Verifica o texto da mensagem de erro
-    })
-  })
-})
+    // Descreve o conjunto de testes relacionados a problemas de performance do usuário
+    describe('Usuário com problemas de perfomance', () => {
+      // Teste para verificar a lentidão ao logar no sistema
+      it('Deve verificar a lentidão ao logar no sistema', () => {
+        cy.login("login", "user4");
+
+        // Mede o tempo de início da execução do teste
+        const startTime = performance.now();
+
+        // Procura a classe que contém a lista de produtos e verifica se é visível
+        cy.get('.inventory_list').should('be.visible').then(() => {
+          // Mede o tempo de término da execução do teste
+          const endTime = performance.now();
+          // Calcula o tempo total de carregamento da página
+          const pageLoadTime = endTime - startTime;
+          // Exibe uma mensagem no console com o tempo de carregamento formatado
+          cy.log(`Tempo de carregamento da página: ${pageLoadTime.toFixed(2)}ms`);
+        });
+      });
+    });
+  });
+});

@@ -25,16 +25,25 @@ Cypress.Commands.add("login", (requiredEnv, requiredUser) => {
     const username = user.username
     const password = user.password
 
-    cy.get('#user-name')
-        .should('be.visible')
-        .type(username)
-    cy.get('#password')
-        .should('be.visible')
-        .type(password);
+    if (username !== undefined && username !== null && username !== "") {
+        cy.get('#user-name')
+            .should('be.visible')
+            .type(username);
+    }
+
+    if (password !== undefined && password !== null && password !== "") {
+        cy.get('#password')
+            .should('be.visible')
+            .type(password);
+    }
+
     cy.contains('Login')
         .should('be.visible')
         .click();
 })
+
+
+
 //
 //
 // -- This is a child command --
