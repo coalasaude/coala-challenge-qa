@@ -41,9 +41,6 @@ Cypress.Commands.add("login", (requiredEnv, requiredUser) => {
         .should('be.visible')
         .click();
 })
-
-
-
 //
 //
 // -- This is a child command --

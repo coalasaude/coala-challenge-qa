@@ -33,8 +33,12 @@
             "user7": {
                 "username": "performance",
                 "password": "secret_sauce"
-            }           
-
+            },
+            "user_checkout": {
+                    "nome": "Roberto",
+                    "sobrenome": "Silva",
+                    "caixaPostal": "60000-000"
+            }      
         }
     }
 }

@@ -1,14 +1,6 @@
 ///<reference types="Cypress" />
 
-// Definição das informações dos produtos em um array de objetos
-const productsInfo = [
-    { name: 'Sauce Labs Backpack', price: '$29.99', imageId: '#item_4_img_link', description: 'carry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection.', cart: 'Add to cart' },
-    { name: 'Sauce Labs Bike Light', price: '$9.99', imageId: '#item_0_img_link', description: "A red light isn't the desired state in testing but it sure helps when riding your bike at night. Water-resistant with 3 lighting modes, 1 AAA battery included.", cart: 'Add to cart' },
-    { name: 'Sauce Labs Bolt T-Shirt', price: '$15.99', imageId: '#item_1_img_link', description: 'Get your testing superhero on with the Sauce Labs bolt T-shirt. From American Apparel, 100% ringspun combed cotton, heather gray with red bolt.', cart: 'Add to cart' },
-    { name: 'Sauce Labs Fleece Jacket', price: '$49.99', imageId: '#item_5_img_link', description: "It's not every day that you come across a midweight quarter-zip fleece jacket capable of handling everything from a relaxing day outdoors to a busy day at the office.", cart: 'Add to cart' },
-    { name: 'Sauce Labs Onesie', price: '$7.99', imageId: '#item_2_img_link', description: "Rib snap infant onesie for the junior automation engineer in development. Reinforced 3-snap bottom closure, two-needle hemmed sleeved and bottom won't unravel.", cart: 'Add to cart' },
-    { name: 'Test.allTheThings() T-Shirt (Red)', price: '$15.99', imageId: '#item_3_img_link', description: "This classic Sauce Labs t-shirt is perfect to wear when cozying up to your keyboard to automate a few tests. Super-soft and comfy ringspun combed cotton.", cart: 'Add to cart' }
-]
+import { productsInfo, expectedImageUrls } from './dados'
 
 // Início dos testes da página de produtos
 describe('Página de Produtos', () => {
@@ -29,26 +21,41 @@ describe('Página de Produtos', () => {
 
     // Loop por cada informação de produto definida em productsInfo
     productsInfo.forEach((product) => {
+        // Extrai as informações específicas do produto usando destructuring
         const { name, price, imageId, description, cart } = product
 
         // Teste: Verifica a exibição correta das informações de um produto
         describe(`Produto ${name}`, () => {
             it(`Deve exibir informações corretas do "${name}"`, () => {
-                // Verifica se o nome, descrição, preço e imagem são exibidos corretamente
+                // Verifica se o nome do produto é exibido corretamente e visível
                 cy.contains(name).should('be.visible')
+
+                // Verifica se a descrição do produto é exibida corretamente e visível
                 cy.contains(description).should('be.visible')
+
+                // Verifica se o preço do produto é exibido corretamente e visível
                 cy.contains(price).should('be.visible')
+
+                // Obtém a imagem do produto pelo ID e verifica se é visível
                 cy.get(`${imageId}`).should('be.visible')
 
                 // Clica no link do produto e verifica se as informações estão corretas na página detalhada
-                cy.get(`[alt="${name}"]`).click()
-                cy.contains(name).should('be.visible')
-                cy.contains(description).should('be.visible')
-                cy.contains(price).should('be.visible')
-                cy.get('.inventory_details_img').should('be.visible')
+                cy.get(`[alt="${name}"]`).click(); // Encontra o link do produto com o atributo alt correspondente e clica nele
 
-                // Clica no botão "Add to cart"
-                cy.contains(cart).click()
+                // Verifica se o nome do produto está visível na página detalhada
+                cy.contains(name).should('be.visible');
+
+                // Verifica se a descrição do produto está visível na página detalhada
+                cy.contains(description).should('be.visible');
+
+                // Verifica se o preço do produto está visível na página detalhada
+                cy.contains(price).should('be.visible');
+
+                // Verifica se a imagem do produto está visível na página detalhada
+                cy.get('.inventory_details_img').should('be.visible');
+
+                // Clica no botão "Add to cart" para adicionar o produto ao carrinho
+                cy.contains(cart).click();
             })
         })
     })
@@ -61,16 +68,6 @@ describe('Página de Produtos', () => {
 
             // Faz o login com nome de usuário "user3"
             cy.login("login", "user3")
-
-            // Lista de URLs esperadas das imagens dos produtos
-            const expectedImageUrls = [
-                '/static/media/sauce-backpack-1200x1500.0a0b85a3.jpg',
-                '/static/media/bike-light-1200x1500.37c843b0.jpg',
-                '/static/media/bolt-shirt-1200x1500.c2599ac5.jpg',
-                '/static/media/sauce-pullover-1200x1500.51d7ffaf.jpg',
-                '/static/media/red-onesie-1200x1500.2ec615b2.jpg',
-                '/static/media/red-tatt-1200x1500.30dadef4.jpg'
-            ]
 
             // Seleciona todos os elementos com a classe "inventory_item_img img" e verificações subsequentes
             cy.get('.inventory_item_img img').should('have.length', 6).each((image, index) => {
@@ -90,19 +87,26 @@ describe('Página de Produtos', () => {
         })
     })
 
+    // Descrição do conjunto de testes: Adicionar todos os itens ao carrinho
     describe('Adicionar todos os itens ao carrinho', () => {
         // Função que adiciona produtos ao carrinho
         function adicionarProdutosAoCarrinho() {
+            // Encontra todos os botões de classe '.btn_inventory' e itera sobre eles
             cy.get('.btn_inventory').each((button) => {
-                cy.wrap(button).click()
+                // Clica em cada botão usando cy.wrap() para encapsulá-lo
+                cy.wrap(button).click();
             })
         }
+
+        // Teste específico: Deve adicionar todos os itens da tela ao carrinho
         it('Deve adicionar todos os itens da tela ao carrinho', () => {
-            adicionarProdutosAoCarrinho()
-            cy.get('.shopping_cart_link').should('have.text', '6')
+            // Chama a função para adicionar produtos ao carrinho
+            adicionarProdutosAoCarrinho();
+
+            // Verifica se o ícone de carrinho tem o texto '6', indicando que seis itens foram adicionados
+            cy.get('.shopping_cart_link').should('have.text', '6');
         })
     })
-
 
     // Descrição do conjunto de testes: Remover todos os itens do Carrinho
     describe('Remover todos os itens do Carrinho', () => {
