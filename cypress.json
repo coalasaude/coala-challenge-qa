@@ -1,0 +1,44 @@
+{
+    "chromeWebSecurity": false,
+    "env": {
+        "links": {
+            "login": "https://www.saucedemo.com/"
+        },
+        
+        "users": {
+            "user1": {
+                "username": "standard_user",
+                "password": "secret_sauce"
+            },
+            "user2": {
+                "username": "locked_out_user",
+                "password": "secret_sauce"
+            },
+            "user3": {
+                "username": "problem_user",
+                "password": "secret_sauce"
+            },
+            "user4": {
+                "username": "performance_glitch_user",
+                "password": "secret_sauce"
+            },
+            "user5": {
+                "username": "",
+                "password": "secret_sauce"
+            },
+            "user6": {
+                "username": "performance_glitch_user",
+                "password": ""
+            },           
+            "user7": {
+                "username": "performance",
+                "password": "secret_sauce"
+            },
+            "user_checkout": {
+                    "nome": "Roberto",
+                    "sobrenome": "Silva",
+                    "caixaPostal": "60000-000"
+            }      
+        }
+    }
+}
